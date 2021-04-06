@@ -2,6 +2,7 @@ Impact of base dataset design on few-shot image
 classification
 Othman Sbai1, Camille Couprie, and Mathieu Aubry
 
+
 https://research.fb.com/wp-content/uploads/2020/08/Impact-of-base-dataset-design-on-few-shot-image-classification.pdf
 
 Abstract. The quality and generality of deep image features is crucially
