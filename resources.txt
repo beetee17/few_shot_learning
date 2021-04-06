@@ -1,0 +1,44 @@
+Impact of base dataset design on few-shot image
+classification
+Othman Sbai1, Camille Couprie, and Mathieu Aubry
+
+https://research.fb.com/wp-content/uploads/2020/08/Impact-of-base-dataset-design-on-few-shot-image-classification.pdf
+
+Abstract. The quality and generality of deep image features is crucially
+determined by the data they have been trained on, but little is known
+about this often overlooked effect. In this paper, we systematically study
+the effect of variations in the training data by evaluating deep features
+trained on different image sets in a few-shot classification setting. The experimental protocol we define allows to explore key practical questions.
+What is the influence of the similarity between base and test classes?
+Given a fixed annotation budget, what is the optimal trade-off between
+the number of images per class and the number of classes? Given a fixed
+dataset, can features be improved by splitting or combining different
+classes? Should simple or diverse classes be annotated? In a wide range
+of experiments, we provide clear answers to these questions on the miniImageNet, ImageNet and CUB-200 benchmarks. We also show how the
+base dataset design can improve performance in few-shot classification
+more drastically than r
+
+Conclusion.
+Our empirical study outlines the key importance of the base training data in
+few-shot learning scenarios, with seemingly minor modifications of the base data
+resulting in large changes in performance, and carefully selected data leading to
+much better accuracy. We also show that few-shot performance can be improved
+by automatically relabelling an intial dataset by merging or splitting classes. We
+hope the analysis and insights that we present will:
+1. impact dataset design for practical applications, e.g. given a fixed number of
+images to label, one should prioritize a large number of different classes and potentially use class grouping strategies using self-supervised features. In addition
+to base classes similar to test data, one should also prioritize simple classes, with
+moderate diversity.
+2. lead to new evaluations of few-shot learning algorithm, considering explicitly
+the influence of the base data training in the results: the current miniIN setting
+of 64 classes and 600 images per class is far from optimal for several approaches.
+Furthermore, the optimal trade-off between number of classes and number of
+images per class is different for different few-shot algorithms, suggesting taking into account different base data distributions in future few-shot evaluation
+benchmarks
+
+Videos
+
+Few Shot Learning 3-part Lecture (Shusen Wang)
+https://www.youtube.com/watch?v=hE7eGew4eeg
+https://www.youtube.com/watch?v=4S-XDefSjTM
+https://www.youtube.com/watch?v=U6uFOIURcD0
