@@ -1,0 +1,23 @@
+Few Shot Learning (FSL) for Image classification
+
+Problem statement
+
+
+Intuition of FSL
+
+
+How Deep Learning Works
+
+Optimisation Function
+
+Loss Function
+
+
+Input and Forward Propagation
+
+
+Backpropagation & Gradient Descent
+
+
+
+

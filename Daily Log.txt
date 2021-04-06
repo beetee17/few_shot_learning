@@ -1,0 +1,20 @@
+To-Do (short-term)
+- literature review on current FSL algorithms(s), gather points of consideration for diff algos, base class selection
+- detailed explanation of concepts/techniques involved in FSL (problem statement, deep learning, siamese networks/triplet loss)
+- 
+
+To-Do (long-term)
+- narrow down on rare object to be classified (especially if FSL has better results with test cases similar to base classes)
+- working python script implementing a FSL algorithm with test dataset
+- specify end-product (web-service?)
+
+
+060421
+Completed
+- confirm project topic as Few Shot Learning (FSL) for image classification on classes with limited available labelled samples 
+
+
+Challenges
+
+
+Learning Points
