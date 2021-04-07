@@ -19,3 +19,19 @@ Challenges
 
 Learning Points
 - FSL leverages on CNN to train the model, hence it is not too dissimilar in terms of steps and techniques involved. However, it is still slightly more complex. Thus, a starting point would be to simply create a CNN to classify some readily available dataset before adapting the code to FSL.
+
+070421
+Completed
+- more details added to understanding of FSL, explaining siamese network and CNNs
+- downloaded omniglot dataset as a starting point
+- wrote a jupyter notebook to preprocess dataset and build a prototype model
+
+
+Challenges
+- number of parameters are extremely large, computer takes too long to build the model and overheats (images are 105x105)
+- need to evaluate next steps e.g. downsize images and/or reduce dimensionality with convolutions of larger strides and pooling layers
+
+Next to-dos
+- overcome aforementioned challenge and build a prototype model
+- visualise its predictions to ensure the code worked as intended
+- test on unseen classes in dataset
