@@ -12,9 +12,10 @@ To-Do (long-term)
 060421
 Completed
 - confirm project topic as Few Shot Learning (FSL) for image classification on classes with limited available labelled samples 
-
+- wrote simplified overview of problem statement and workings of FSL algorithm
 
 Challenges
 
 
 Learning Points
+- FSL leverages on CNN to train the model, hence it is not too dissimilar in terms of steps and techniques involved. However, it is still slightly more complex. Thus, a starting point would be to simply create a CNN to classify some readily available dataset before adapting the code to FSL.
