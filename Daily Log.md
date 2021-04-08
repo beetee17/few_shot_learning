@@ -10,6 +10,7 @@
 
 
 **060421**
+
 *Completed*
 - confirm project topic as Few Shot Learning (FSL) for image classification on classes with limited available labelled samples 
 - wrote simplified overview of problem statement and workings of FSL algorithm
@@ -19,6 +20,7 @@
 - FSL leverages on CNN to train the model, hence it is not too dissimilar in terms of steps and techniques involved. However, it is still slightly more complex. Thus, a starting point would be to simply create a CNN to classify some readily available dataset before adapting the code to FSL.
 
 **070421**
+
 *Completed*
 - more details added to understanding of FSL, explaining siamese network and CNNs
 - downloaded omniglot dataset as a starting point
@@ -35,6 +37,7 @@
 - test on unseen classes in dataset
 
 **080421**
+
 *Completed*
 - added functionality to notebook to save/load a model, run randomised n-way k-shot tests with relevant visualisations
 - was able to build a model using 20 alphabets of dataset with muliple conv layers by reducing layers' dimensionalities (model had 90% accuracy on 100 out-of-sample 2-way-2-shot tests)
