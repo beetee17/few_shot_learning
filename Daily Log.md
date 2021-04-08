@@ -45,7 +45,7 @@
 *Challenges*
 
 - ~~a sufficiently accurate model would take a lot more power to build as current test model uses only 5 alphabets for training and just one convolutional layer in network~~
-- ~~the model seen in https://towardsdatascience.com/one-shot-learning-with-siamese-networks-using-keras-17f34e75bb3d uses multiple conv and pooling layers, as well as 30 alphabets of dataset. It is stated that a T4000 GPU was used. Current machine only has intel HD630 GPU which is not utilised as Keras only supports Nvidia GPUs (not sure it would be much faster even if it could use the GPU) ~~
+- ~~the model seen in https://towardsdatascience.com/one-shot-learning-with-siamese-networks-using-keras-17f34e75bb3d uses multiple conv and pooling layers, as well as 30 alphabets of dataset. It is stated that a T4000 GPU was used. Current machine only has intel HD630 GPU which is not utilised as Keras only supports Nvidia GPUs (not sure it would be much faster even if it could use the GPU)~~
 
 *Next-to-dos*
 - can try downsizing images to allow for increasing size of layers of model ( see if that produces even better model)
