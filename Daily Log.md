@@ -50,3 +50,16 @@
 *Next-to-dos*
 - can try downsizing images to allow for increasing size of layers of model ( see if that produces even better model)
 - make other models for validation purposes (e.g. random choice and k-nearest neighbour model)
+
+**090421**
+
+*Completed*
+- added 2 baseline models to compare against FSL model, specifically random guess and nearest neighbor model
+- added 20 way 1 shot testing function for rigorous test of FSL model (i.e an alphabet is chosen, and one character is made the query image while 1 image from each of the 20 characters within the alphabet make up the support set)
+
+*Next-to-dos*
+- research on more techniques to improve accuracy of model
+- brainstorm on which rare object to choose for end-product (ideally it is relevant to DSTA, has related open source datasets for training)
+
+*Challenges*
+-prototyping a model using 60% of dataset with multiple conv layers takes a couple of hours
