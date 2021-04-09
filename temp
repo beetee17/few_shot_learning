@@ -1,0 +1,52 @@
+def get_20_way_test(X_test, Y_test, test_alphabets):
+    # choose random alphabet from test alphabets
+    random_alphabet = np.random.choice(test_alphabets)
+    # choose random char from 1-20 (improvement: change to range within chosen alphabet)
+    random_char = np.random.choice(['character{}'.format(i) for i in range(1,21)])
+    # the label of the query image
+    label = random_alphabet+random_char
+
+    # init
+    support_set = []
+    targets = np.zeros(20)
+    
+    # choose query image corresponding the chosen label
+    i = np.random.choice([i for i, class_ in enumerate(Y_test) if class_ == label])
+    query = X_test[i]
+    
+    # add as first item of support set 
+    support_set.append([query, label])
+    targets[0] = 1
+
+    # all available classes for the support set 
+    test_classes = ['{}character{}'.format(random_alphabet, num2str(i)) for i in range(1, 21)]
+
+    # iterate through the list and add 1 random image from each class to support set (excluding the label)
+    for item in test_classes:
+        if item != label:
+            j = np.random.choice([j for j, class_ in enumerate(Y_test) if class_ == item])
+            pair = [query, X_test[j]]
+            support_set.append(pair)
+
+    # shuffle support set and targets 
+    support_set, targets = shuffle(support_set, targets)
+
+    return np.array(support_set), np.array(targets)
+    
+
+test_alphabets = alphabet_names[len(alphabet_names)-2:]
+X_test, Y_test = load_data(test_alphabets)
+get_20_way_test(X_test, Y_test, test_alphabets)
+
+**090421**
+
+*Completed*
+- added 2 baseline models to compare against FSL model, specifically random guess and nearest neighbor model
+- added 20 way 1 shot testing function for rigorous test of FSL model (i.e an alphabet is chosen, and one character is made the query image while 1 image from each of the 20 characters within the alphabet make up the support set)
+
+*Next-to-dos*
+- research on more techniques to improve accuracy of model
+- brainstorm on which rare object to choose for end-product (ideally it is relevant to DSTA, has related open source datasets for training)
+
+*Challenges*
+-prototyping a model using 60% of dataset with multiple conv layers takes a couple of hours
