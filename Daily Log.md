@@ -62,4 +62,19 @@
 - brainstorm on which rare object to choose for end-product (ideally it is relevant to DSTA, has related open source datasets for training)
 
 *Challenges*
--prototyping a model using 60% of dataset with multiple conv layers takes a couple of hours
+- prototyping a model using 60% of dataset with multiple conv layers takes a couple of hours
+
+
+**120421**
+
+*Completed*
+- completed 20-way 1-shot teasting function. Some alphabets had less than 20 characters. The current function outputs a task up to 20-way 1-shot (if alphabet has 17 chars -> 17-way 1-shot task is produced. If alphabet had 30 chars -> 20-way 1-shot task is produced with random selection of chars)
+- added early callback when trainng model using loss on validation testing between epochs (if loss on validation set increases, stop training and save the previous model)
+- Have not prototyped new model using this method as it takes quite long
+- Added function to graph accuracy of different models/baselines on many N-way 1-shot tests for different Ns
+
+*Next to-dos*
+- See 090421
+- Create model using train, validation split and early callback
+- Compare this model against current 
+- Repeat using k-fold cross validation and statified k-fold?
