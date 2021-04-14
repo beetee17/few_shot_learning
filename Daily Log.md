@@ -78,3 +78,40 @@
 - Create model using train, validation split and early callback
 - Compare this model against current 
 - Repeat using k-fold cross validation and statified k-fold?
+
+
+**130421**
+*To-Do*
+- research on current OCR space (techniques, rare languages) etc
+- Counter terrorism applications
+- Make model detect unseen classes i.e if query image is not in support set (how would the model know? Maybe if its below some threshold in max predicted probabilty) -> useful for model to be able to detect if class is not in database
+
+**140421**
+*Completed*
+- OCR space seems to be saturated even with more difficult and rare languages that have counter-terrorism applications such as Arabic
+- For now, goal remains to be to classify novel military vehicles/weapon systems/etc
+
+*Challenges*
+- Read up on fine-tuning as a means to improve accuracy of FSL model, however, am unsure at what exactly it entails 
+- This video explained the whole process: https://youtu.be/U6uFOIURcD0, however, I'm unsure if my understanding of it is correct, especially the part on training the model's parameters. This is because he states that the weights are initialise to be mean feature vectors of the support set. However, if each few shot task is done on different support sets, the mean vectors are changing from task to task, and therefore how could they be updated (since they are reset with each query)
+- The only way I can think of to make the parameters trainable, is if our support set is our entire dataset, excluding the query images which we select beforehand (would it make a difference if we include them? My thinking is that if we include them it is in a sense 'cheating' as our model gets some part of the answer already)
+
+- In my understanding, we first have a pre-trained neural network that is capable of extracting features from images. This neural network is trained on a large base dataset of non-novel classes. I also infer from this that if our base dataset is very different from our novel classes, the features extracted may be less relevant to our goal, especially at the deeper layers of the neural network -> thus, if we do use such a pretrained network, our fine tuning stage could backpropagate its gradients to the last few layers of neural network. However, if our network was pretrained on a base dataset similar to novel classes, we can at most simply backpropagate our gradient to the last layer of the network, if at all. The neural network may be a straightforward conv neural network that predicts labels of images, or it could be a siamese network architecture that predicts similarity scores. This is less important because when fine tuning, we strip the network of its activation layer, as we only care about the feature vector that is output from the network. 
+- Now comes the actual fine tuning. We have our novel dataset that our network was not trained on. This datset contains few samples of each class. Let's say we have 20 images per class with a total of 10 classes. We choose how many images per class to use in our fine-tuning, let's say we choose 5 images each, for a total of 5x10 query samples.
+- We exclude these 50 chosen queries and pass the rest of the labelled images to the feature extractor (i.e. our pretrained network) to output a feature vector for the class. Since there are >1 sample (20-2 = 18) of the novel class, we take the mean of its feeature vectors. Then, we normalize it. Thus, for each of the 10 classes in the novel dataset, we have a corresponding mean feature vector as our base.
+- now, we can make various n-way-k-shot tasks to fine tune our model. Since we chose 2 images per class to use as queries, we haven 20 queries in total, and 18 images per class in the support set. This means we have 20 10-way-18-shot tasks.
+- For each of the queries, we now pass the query image through the feature extractor and obtain a vector. This vector is paired with each of the 10 mean feature vecotrs of the support set, and a distance metric is computed (e.g. absolute diff, euclidean distance, cosine similarity, etc). This results in a vector of similarities between our query (of unknown class to the model) and the various classes in our novel database. Now, we apply a softmax to this similarity value to output the model's probability vector that our query image belongs to each of the classes. 
+- Cross entropy loss can be used as our loss function, and backpropagate its gradients to update the model parameters (which were initialised as the mean feature vectors). We may also have a bias parameter, which we can init as 0
+- Since we may have small suppport sets and/or query samples, we must use a regularizer to prevent overfitting  (entropy regularization was suggested for this)
+  
+
+*To-Do*
+- Implement the above. The current model may be used as the pretrained-network. Thus, what needs to be done is:
+- Split the 'test' dataset into a 'fine-tuning' and 'actual_test' dataset (2:1 split?) 
+- In the fine-tuning set, exclude a number of images from each character, e.g. 5 per character.
+- Our support set consists of the rest of the images in the fine-tuning datsset
+- Compute the mean feature vectors for each class in the support-set by passing the images into our pretrained model (strip the lambda and sigmoid layer)
+- Create a second model and initialise its parameters to be the mean vectors
+- Iterate through each query image, passing them through the pretrained model to get a feature vector; normalize it
+- Compute a similarity value with each class in the support set and apply softmax
+- Compute total loss and backpropagate
