@@ -115,3 +115,26 @@
 - Iterate through each query image, passing them through the pretrained model to get a feature vector; normalize it
 - Compute a similarity value with each class in the support set and apply softmax
 - Compute total loss and backpropagate
+
+
+**150421**
+*Completed*
+- All of the above was completed, however it turned out to be a dead end (i.e too dumb to understand the video)
+- Now moving to fine tuning a pretrained model using siamese network architecture
+
+
+*To-do*
+- Proceed to clean up + preprocess military dataset
+- Use simple fine-tuned model approach and apply to the dataset
+
+
+**160421**
+*Completed*
+ - modify nearest neighbour to be abs diff in output of feature vector from pretrained model (instead of just abs diff of the images themselves)
+- graph accuracy of the fine-tuned model and see if it obtains better results than previous model (from scratch)
+ - 
+*To-do*
+-
+- plot new graph
+- cont. training current pretrained model as it seems Out Of Sample performance is still equal to training set performance
+- Clean up military dataset
