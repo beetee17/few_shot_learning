@@ -1,5 +1,6 @@
 images_background
 images_evaluation
 vgg16
+*.txt
 *.h5
 *.npy
