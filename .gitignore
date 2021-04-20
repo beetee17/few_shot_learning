@@ -1,5 +1,6 @@
 images_background
 images_evaluation
+main/data
 vgg16_callback
 vgg16
 *.txt
