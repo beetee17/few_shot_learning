@@ -1,11 +1,7 @@
 __pycache__
 images_background
 images_evaluation
-missile/data
-missile/models
-missile/preprocess
-vgg16_callback
-vgg16
+data
+models
+preprocess
 *.txt
-*.h5
-*.npy
