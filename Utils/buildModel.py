@@ -67,7 +67,7 @@ def get_siamese_model(input_shape):
     # return the model
     return siamese_net  
     
-def get_pretrained_model(input_shape):
+def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     """
         Model architecture
     """
@@ -89,7 +89,13 @@ def get_pretrained_model(input_shape):
     
     pre_train.add(base)
     pre_train.add(tf.keras.layers.Flatten())
-    pre_train.add(Dense(256))
+
+    for i in range(num_dense):
+        pre_train.add(Dense(dense_size[i]))
+    
+    for layer in pre_train.layers:
+        print(layer.name, layer.trainable)
+
     embedding = Model(pre_train.input, pre_train.output, name="Embedding")
     
     
@@ -122,7 +128,7 @@ class EarlyStoppingAtMinLoss(keras.callbacks.Callback):
       number of no improvement, training stops.
   """
 
-    def __init__(self, val_inputs, val_labels, patience=0):
+    def __init__(self, val_inputs, val_labels, patience=0, batch_size=16):
         super(EarlyStoppingAtMinLoss, self).__init__()
         self.patience = patience
         # best_weights to store the weights at which the minimum loss occurs.
@@ -130,6 +136,7 @@ class EarlyStoppingAtMinLoss(keras.callbacks.Callback):
         self.best_epoch = 0
         self.val_inputs = val_inputs
         self.val_labels = val_labels
+        self.batch_size = batch_size
 
     def on_train_begin(self, logs=None):
         # The number of epoch it has waited when loss is no longer minimum.
@@ -146,7 +153,7 @@ class EarlyStoppingAtMinLoss(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         
         print('\nEvaluating model on validations set')
-        metrics = self.model.evaluate(x=self.val_inputs, y=self.val_labels, batch_size=16, verbose=1, sample_weight=None, steps=None, return_dict = True)
+        metrics = self.model.evaluate(x=self.val_inputs, y=self.val_labels, batch_size=self.batch_size, verbose=1, sample_weight=None, steps=None, return_dict = True)
         current = metrics['loss']
 
         # for plotting learning process
@@ -163,14 +170,14 @@ class EarlyStoppingAtMinLoss(keras.callbacks.Callback):
         else:
             self.wait += 1
             if self.wait >= self.patience:
-                self.stopped_epoch = epoch
+                self.stopped_epoch = epoch + 1
                 self.model.stop_training = True
                 print("Restoring model weights from the end of the best epoch - epoch {}.".format(self.best_epoch))
                 self.model.set_weights(self.best_weights)
 
     def on_train_end(self, logs=None):
         if self.stopped_epoch > 0:
-            print("Epoch {}: early stopping".format(self.stopped_epoch + 1))
+            print("Epoch {}: early stopping".format(self.stopped_epoch))
         else:
             self.model.set_weights(self.best_weights)
             print("set weights from epoch {}".format(self.best_epoch))
