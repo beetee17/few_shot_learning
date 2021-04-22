@@ -10,11 +10,8 @@ def show_pairs(num_pairs, pairs, labels, raw_labels=np.array([]), random=False):
         if random:
             rand_i = np.random.randint(0, len(labels))
         
-        
-
-        
         if len(raw_labels) > 0:
-            fig.suptitle('{}\n{}                             {}'.format(labels[rand_i], raw_labels[rand_i][0].decode('utf-8'), raw_labels[rand_i][1].decode('utf-8')))
+            fig.suptitle('{}\n{}                             {}'.format(labels[rand_i], raw_labels[rand_i][0], raw_labels[rand_i][1]))
 
         elif not raw_labels:
             fig.suptitle('{}\n'.format(labels[rand_i]))
