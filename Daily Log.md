@@ -138,3 +138,13 @@
 - plot new graph
 - cont. training current pretrained model as it seems Out Of Sample performance is still equal to training set performance
 - Clean up military dataset
+
+**230421**
+- currently training model on aircraft dataset. of the 70 classes provided, 30 were found to have military operators. 20 are used to train the model, the remaining 10 were split equally to validate and test
+
+*Learning Points*
+- initially, the split was done such that 20 were for training and 10 for testing. The validation set was a subset of the training set. This resulted in poor test performance as the validation loss was of the seen classes. Thus the model probably overfit and was not stopped in time by our early callback measure. Current validation set is of unseen classes, thus the loss calculated more accurately represents the model's test performance, and can be called back appropriately
+- The activation function used previously seems to have had a major error. After feature vectors were extracted, the absolute difference was taken and applied to a softmax function. Since the absolute diff lies [0, inf], the prediction lied in [0.5, 1]. The model was thus punished with no way to correct itself. The necessary change was made, such that currently the cosine similarity is used instead of absolute difference, which is bounded in [-1,1], this allows the sigmoid function to output a value less than 0.5 if there is large dissimilarity between the feature vectors. That being said, the output of sigmoid is still bounded by more or less [0.25, 0.75], since the 'active' regions are at -5 and 5. Thus, consider multiplying the cosine similarity value by 5 before passing it to sigmoid
+- Comment to above: previous implementation was not incorrect as the dense layer includes a bias term such that the activation function could still map to [0,1]. Thus the model was not "punished without being able to correct itself". However, will still try the cosine similarity method to see if it works better.
+
+- Some resources have also pointed to the use of smaller batch sizes to train the model. Current model seems to have difficulty converging on this dataset as opposed to the omniglot one which was quite successful (probably due to increase in dimensionality, variability and complexity of the inputs). 
