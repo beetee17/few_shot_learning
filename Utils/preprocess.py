@@ -80,7 +80,7 @@ def get_all_X_Y(all_imgs_dir, desired_ratio, width, height, crop_bottom=0):
                 print(fn)
             
             if count % 200 == 0:
-                print(count)
+                print(X.shape, len(Y))
 
             count += 1
     
