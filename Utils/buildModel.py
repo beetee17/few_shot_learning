@@ -104,15 +104,17 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     encoded_l = embedding(left_input)
     encoded_r = embedding(right_input)
     
- 
-    # Add a customized layer to compute the absolute difference between the encodings
-    L1_layer = Lambda(lambda tensors:K.abs(tensors[0] - tensors[1]))
-    L1_distance = L1_layer([encoded_l, encoded_r])
-  
+    cos_sim = Dot(axes=1, normalize=True)([encoded_l, encoded_r])
 
-    # # Add a dense layer with a sigmoid unit to generate the similarity score
-    prediction = Dense(1,activation='sigmoid',bias_initializer='zeros')(L1_distance)
+     
+    # Add a customized layer to compute the absolute difference between the encodings (1/diff to get similarity score)
+    # L1_layer = Lambda(lambda tensors: K.abs(tensors[0] - tensors[1]))
+    # L1_distance = L1_layer([encoded_l, encoded_r])
 
+    # Add a dense layer with a sigmoid unit to generate the similarity score
+    prediction = Dense(1,activation='sigmoid',kernel_initializer=initializers.Constant(value=5), bias_initializer='zeros')(cos_sim)
+
+    # prediction = Lambda(lambda x: 1-x)(tanh)
 
     # # Connect the inputs with the outputs
     pretrained_model = Model(inputs=[left_input,right_input], outputs=prediction)
