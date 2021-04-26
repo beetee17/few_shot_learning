@@ -91,8 +91,8 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     pre_train.add(tf.keras.layers.Flatten())
 
     for i in range(num_dense):
-        pre_train.add(Dropout(0.2))
         pre_train.add(Dense(dense_size[i]))
+        pre_train.add(Dropout(0.5))
     
     for layer in pre_train.layers:
         print(layer.name, layer.trainable)
