@@ -6,7 +6,7 @@ from keras.models import Sequential, Model
 from keras.applications.vgg16 import VGG16
  
 from keras.layers import Flatten
-from keras.layers import Flatten, Conv2D, MaxPooling2D, Dense, Concatenate, Dot, Lambda, Input
+from keras.layers import Flatten, Conv2D, MaxPooling2D, Dense, Concatenate, Dot, Lambda, Input, Dropout
 
 from tensorflow.keras import initializers
 from tensorflow.keras.regularizers import l2
@@ -91,6 +91,7 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     pre_train.add(tf.keras.layers.Flatten())
 
     for i in range(num_dense):
+        pre_train.add(Dropout(0.2))
         pre_train.add(Dense(dense_size[i]))
     
     for layer in pre_train.layers:
