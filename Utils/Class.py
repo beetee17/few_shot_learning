@@ -1,4 +1,5 @@
 import numpy as np
+from Utils import buildModel
 
 class Predictor(object):
 
@@ -102,3 +103,34 @@ class Nearest_Neighbour(Predictor):
                 min_dist = curr_dist
                 prediction = i
         self.prediction = prediction
+
+def stable_softmax(x):
+    z = x - max(x)
+    numerator = np.exp(z)
+    denominator = np.sum(numerator)
+    softmax = numerator/denominator
+
+    return softmax
+    
+class Model_Nearest_Neighbour(Predictor):
+
+    def __init__(self, name='VGG16 Nearest Neighbour'):
+        super().__init__(name)
+        self.name = name
+        self.model = buildModel.get_feature_extractor((200, 280, 3))
+        self.predictions = []
+
+
+    def set_prediction(self, support_set, targets):
+
+        similarities = np.array([])
+
+        for i in range(len(support_set)):
+            pair = support_set[i]
+            np.append(similarities, self.model.predict(pair))
+
+        self.predictions = stable_softmax(similarities)
+        self.prediction = np.argmax(predictions)
+
+
+
