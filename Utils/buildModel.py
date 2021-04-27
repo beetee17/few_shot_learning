@@ -10,6 +10,7 @@ from keras.layers import Flatten, Conv2D, MaxPooling2D, Dense, Concatenate, Dot,
 
 from tensorflow.keras import initializers
 from tensorflow.keras.regularizers import l2
+from tensorflow.keras import constraints
 
 from keras.optimizers import Adam
 from keras import backend as K
@@ -66,7 +67,27 @@ def get_siamese_model(input_shape):
 
     # return the model
     return siamese_net  
+
+def get_feature_extractor(input_shape):
+
+    left_input = Input(input_shape)
+    right_input = Input(input_shape)
+
+    base = VGG16(include_top=False, input_shape=input_shape)
+    base.add(tf.keras.layers.Flatten())
+
+    extractor = Model(base.input, base.output, name="Feature Extractor")
+
+    encoded_l = extractor(left_input)
+    encoded_r = extractor(right_input)
     
+    cos_sim = Dot(axes=1, normalize=True)([encoded_l, encoded_r])
+
+    model = Model(inputs=[left_input,right_input], outputs=cos_sim)
+
+    return model
+
+
 def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     """
         Model architecture
@@ -91,14 +112,14 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     pre_train.add(tf.keras.layers.Flatten())
 
     for i in range(num_dense):
-        pre_train.add(Dense(dense_size[i]))
+        pre_train.add(Dense(dense_size[i], kernel_constraint=constraints.max_norm(2.)))
         pre_train.add(Dropout(0.5))
     
     for layer in pre_train.layers:
-        print(layer.name, layer.trainable)
+        print(layer.get_config())
+
 
     embedding = Model(pre_train.input, pre_train.output, name="Embedding")
-    
     
 
     # Generate the encodings (feature vectors) for the two images
@@ -108,10 +129,6 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     cos_sim = Dot(axes=1, normalize=True)([encoded_l, encoded_r])
 
      
-    # Add a customized layer to compute the absolute difference between the encodings (1/diff to get similarity score)
-    # L1_layer = Lambda(lambda tensors: K.abs(tensors[0] - tensors[1]))
-    # L1_distance = L1_layer([encoded_l, encoded_r])
-
     # Add a dense layer with a sigmoid unit to generate the similarity score
     prediction = Dense(1,activation='sigmoid',kernel_initializer=initializers.Constant(value=5), bias_initializer='zeros')(cos_sim)
 
