@@ -6,7 +6,7 @@ from keras.models import Sequential, Model
 from keras.applications.vgg16 import VGG16
  
 from keras.layers import Flatten
-from keras.layers import Flatten, Conv2D, MaxPooling2D, Dense, Concatenate, Dot, Lambda, Input, Dropout
+from keras.layers import Flatten, Conv2D, MaxPooling2D, Dense, Concatenate, Dot, Lambda, Input, Dropout, BatchNormalization
 
 from tensorflow.keras import initializers
 from tensorflow.keras.regularizers import l2
@@ -104,19 +104,28 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256)):
     # freeze all layers but last 4
     for layer in base.layers[:-4]:
         layer.trainable = False
+        pre_train.add(layer)
 
-    for layer in base.layers:
-        print(layer.name, layer.trainable)
+    for layer in base.layers[-4:]:
+        pre_train.add(BatchNormalization())
+        pre_train.add(layer)
+
+    # for layer in base.layers:
+    #     print(layer.name, layer.trainable)
     
-    pre_train.add(base)
+    # pre_train.add(base)
     pre_train.add(tf.keras.layers.Flatten())
 
     for i in range(num_dense):
-        pre_train.add(Dense(dense_size[i], kernel_constraint=constraints.max_norm(2.)))
-        pre_train.add(Dropout(0.5))
+        pre_train.add(BatchNormalization())
+        pre_train.add(Dense(dense_size[i]))
+        # pre_train.add(Dense(dense_size[i], kernel_constraint=constraints.max_norm(2.)))
+        # pre_train.add(Dropout(0.5))
+    
+    # pre_train.pop()
     
     for layer in pre_train.layers:
-        print(layer.get_config())
+        print(layer.name, layer.trainable)
 
 
     embedding = Model(pre_train.input, pre_train.output, name="Embedding")
