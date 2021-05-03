@@ -122,7 +122,10 @@ def get_accuracy(models, X_test, Y_test, N, num_tests):
     # init 
     accuracies = {name : [] for name in [model.name for model in models]}
     accuracies.update({'range_' : N})
+    
     for n in N:
+
+        print('testing {}-shot 1-way...'.format(n))
 
         if n == 1:
             for k, v in accuracies.items():
