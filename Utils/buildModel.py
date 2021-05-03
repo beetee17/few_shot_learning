@@ -123,7 +123,8 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256), base='vgg16
             pre_train.add(layer)
 
         for layer in base.layers[-trainable:]:
-            # pre_train.add(BatchNormalization())
+            if batch_norm:
+                pre_train.add(BatchNormalization())
             layer.trainable = True
             pre_train.add(layer)
 
@@ -158,4 +159,4 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256), base='vgg16
 
     # return the model
     return pretrained_model 
-    
+
