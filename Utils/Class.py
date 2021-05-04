@@ -88,7 +88,7 @@ class Random(Predictor):
 
 class Nearest_Neighbour(Predictor):
 
-    def __init__(self, name ='Nearest Neighbour'):
+    def __init__(self, name ='Naive Nearest Neighbour'):
         super().__init__(name)
         self.name = name
  
@@ -118,19 +118,17 @@ class Model_Nearest_Neighbour(Predictor):
         super().__init__(name)
         self.name = name
         self.model = buildModel.get_feature_extractor((200, 280, 3))
-        self.predictions = []
-
+        self.probs = None
+        
+    def get_probs(self):
+        return np.round(self.probs, 4) 
 
     def set_prediction(self, support_set, targets):
 
-        similarities = np.array([])
+        similarities = self.model.predict([support_set[:,0], support_set[:,1]])
 
-        for i in range(len(support_set)):
-            pair = support_set[i]
-            np.append(similarities, self.model.predict(pair))
-
-        self.predictions = stable_softmax(similarities)
-        self.prediction = np.argmax(predictions)
+        self.probs = stable_softmax(similarities)
+        self.prediction = np.argmax(self.probs)
 
 
 
