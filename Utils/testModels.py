@@ -125,7 +125,8 @@ def get_accuracy(models, X_test, Y_test, N, num_tests):
     
     for n in N:
 
-        print('testing {}-shot 1-way...'.format(n))
+        if n != 1:
+            print('testing {}-shot 1-way...'.format(n))
 
         if n == 1:
             for k, v in accuracies.items():
@@ -169,7 +170,7 @@ def plot_accuracy(accuracies, save=None):
     plt.legend()
 
     if save:
-        plt.savefig('plots/{}'.format(save))
+        plt.savefig(save)
         print("Graph was saved as {}!".format(save))
 
     # Display the figure.
