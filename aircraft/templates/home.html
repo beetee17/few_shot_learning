@@ -19,27 +19,30 @@
             $(document).ready(function() {
 
                 // open file browser when browse button is clicked
-                
-                // $('#files').onChange = function () {
+                $('#browse').click(function() {
+                    $('#files').trigger('click')
+                })
 
-                //     console.log('test')
-                //     var theFiles = e.target.files;
-                //     console.log(theFiles)
+                document.getElementById('files').onchange = function (e) {
+
+                    console.log('test')
+                    var theFiles = e.target.files;
+                    console.log(theFiles)
                     
-                //     for (i=0; i < theFiles.length; i++) {
-                //         console.log(theFiles[i])
-                        // var img = document.createElement('img')
-                        // img.src = URL.createObjectURL(files[i])
-                        // img.width = 280
-                        // img.height = 200
-                        // document.body.appendChild(img)
-                //     }
+                    for (i=0; i < theFiles.length; i++) {
+                        console.log(theFiles[i])
+                        var img = document.createElement('img')
+                        img.src = URL.createObjectURL(theFiles[i])
+                        img.width = 280
+                        img.height = 200
+                        document.body.appendChild(img)
+                    }
                     
 
-                // }
-
+                }
             
             });
+
         </script>
 
         <title> WELCOME </title>
@@ -59,9 +62,20 @@
         <p>
 
                 <form id='form', action="/uploadfiles/" enctype="multipart/form-data" method="post">
-                <input name="files", id='files', type="file" webkitdirectory directory multiple, onchange="get_imgs()">
+
+                <input name="files" type="file" id="files" style="display: none" webkitdirectory directory multiple/>
+
+                <button input type="button" id='browse', class="ui button">Browse</button>
+
+                <!-- <input name="files", id='files', type="file" webkitdirectory directory multiple> -->
+
                 <input type="submit">
                 </form>
+
+                
+
+                <img id='output' width='200' />
+
     </body>
 
  
