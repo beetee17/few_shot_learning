@@ -7,39 +7,38 @@
         src="https://code.jquery.com/jquery-3.1.1.min.js"
         integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
         crossorigin="anonymous">
-    
+
+
+
         
         </script>
-
+    
         <script>
+           
+                
             $(document).ready(function() {
+
                 // open file browser when browse button is clicked
-                $('#browse').click(function() {
-                    $('#open_dir').trigger('click')
-                })
-                var name = document.getElementById('open_dir').onchange = function (e) {
-                    // this function gets the folder name of a selected folder
-                    // theFiles is a list of files in the selected folder, containing the file name, file type and its relative path w.r.t to the selected folder (under webkitRelativePath)
+                
+                // $('#files').onChange = function () {
 
-                    var theFiles = e.target.files;
+                //     console.log('test')
+                //     var theFiles = e.target.files;
+                //     console.log(theFiles)
                     
-                    console.log(img.src)
+                //     for (i=0; i < theFiles.length; i++) {
+                //         console.log(theFiles[i])
+                        // var img = document.createElement('img')
+                        // img.src = URL.createObjectURL(files[i])
+                        // img.width = 280
+                        // img.height = 200
+                        // document.body.appendChild(img)
+                //     }
                     
-                    var relativePath = theFiles[0].webkitRelativePath;
-                    console.log(theFiles)
 
-                    // the first value in the resulting list when the relative path is split by / would be the root (selected) folder
-                    var path = relativePath.split("/")[0];
-                    console.log(path)
-                    // $(location).attr('href', `http://localhost:8000/get_predictions/?path=${path}`)
+                // }
 
-                }
-
-                $('#submit').click(function() {
-                    var text = $('#path').val()
-                    $(location).attr('href', `http://localhost:8000/get_predictions/?path=${text}`)
-                    console.log(text)
-                })
+            
             });
         </script>
 
@@ -58,21 +57,13 @@
             &ensp; &ensp; ↳ label2 <br>
             &ensp; &ensp; &ensp; ↳ label2_images <p>
         <p>
-            To output the predictions for each query & support image pair, enter the <em> path/to/folder </em> below</p>
 
-                <form action="/uploadfiles/" enctype="multipart/form-data" method="post">
-                <input name="files" type="file" webkitdirectory directory multiple>
+                <form id='form', action="/uploadfiles/" enctype="multipart/form-data" method="post">
+                <input name="files", id='files', type="file" webkitdirectory directory multiple, onchange="get_imgs()">
                 <input type="submit">
                 </form>
     </body>
 
-    <div class="ui action input">
-        <input type="text", id='path',  placeholder="path/to/folder">
-        <button id='submit', class="ui button">Submit</button>
-    </div>
-    <input type="file" id="open_dir", style="display: none" webkitdirectory directory multiple/>
-    <button id='browse', class="ui button">Browse</button>
-
-    <img id='output' width='200' />
+ 
 
 </html>
