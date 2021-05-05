@@ -1,6 +1,6 @@
 import sys
 from typing import Optional
-
+import requests
 from typing import List
 from fastapi import FastAPI, Request, File, UploadFile
 from fastapi.responses import Response
@@ -50,18 +50,49 @@ def get_pairs(path):
 
 app = FastAPI()
 db = []
-
 templates = Jinja2Templates(directory='templates')
+from PIL import Image
+import io
+
 
 @app.post("/uploadfiles/")
 async def create_upload_files(request : Request, files: List[UploadFile] = File(...)):
 
+    support_set = list()
+    queries = list()
+    all_pairs = list()
+
     for file in files:
+     
         contents = await file.read()
+        
+        image = Image.open(io.BytesIO(contents))
+        
+        image = np.array(image)
 
-        db.append(contents)
+        image = preprocess.pad_and_resize(image, desired_ratio=1.4, width=280, height=200)
 
-    return {'filenames' : [file.filename for file in files]}
+        if 'support' in file.filename:
+            support_set.append(image)
+
+        elif 'query' in file.filename:
+            queries.append(image)
+
+    for query_img in queries:
+        
+        all_pairs.append([[query_img, support_img] for support_img in support_set])
+    
+    all_pairs = np.array(all_pairs)
+
+    predictions = list()
+ 
+    for query_pairs in all_pairs:
+
+        prediction = model.predict([query_pairs[:,0], query_pairs[:,1]]).flatten()
+        predictions.append(list(map(float, prediction)))
+
+
+    return {'filenames' : [file.filename for file in files], 'predictions' : predictions}
 
 @app.get("/")
 def read_root(request : Request):
@@ -70,45 +101,6 @@ def read_root(request : Request):
                                                     })
     
 
-
-# http://localhost:8000/get_predictions/?path=path\\to\\folder
-@app.get("/get_predictions/")
-def get_predictions(request : Request):
-    response = []
-    for f in db:
-        response.append(Response(content=f))
-    print(response)
-    return templates.TemplateResponse('predictions.html', {'request' : request, 'files' : response})
-    # if the dir exists in the current working directory
-    if os.path.isdir(os.getcwd() + '\\' + path):
-
-        path = os.getcwd() + '\\' + path
-        
-    # if the dir is not a full path and not in cwd, check if it exists
-    elif len(path.split('\\')) == 1:
-        for abs_path, directories, files in os.walk(r'C:\Users\Admin'):
-            
-            if path in directories:
-                path = os.path.join(abs_path, path)
-                print('found %s' % os.path.join(abs_path, path))
-
-    # the dir is not in cwd and was not found in local search -> it may be a full path
-            
-    query_img_dir, support_imgs_dir, support_set = get_pairs(path)
-    
-    predictions = list(model.predict([support_set[:,0], support_set[:,1]]).flatten())
-    # predictions = {support_imgs_dir[i].replace(path + '\\support\\', '') : str(predictions[i]) for i in range(len(support_imgs_dir))}
-
-
-    print(predictions)
-
-    
-    return templates.TemplateResponse('predictions.html', {'request' : request,
-                                                           'query_img_dir' : query_img_dir,
-                                                           'support_imgs_dir' : support_imgs_dir,
-                                                           'predictions' : predictions}) 
-
-    return {"predictions": predictions}
 
 
 
