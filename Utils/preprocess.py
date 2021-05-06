@@ -46,8 +46,10 @@ def pad_img(img, desired_ratio):
 
     return padded_img
 
-def pad_and_resize(img, desired_ratio, width, height):
-
+def pad_and_resize(img, desired_ratio, width, height, crop_bottom=0):
+    
+    if crop_bottom > 0:
+                img = img[:img.shape[0]-crop_bottom, :]
     padded_img = pad_img(img, desired_ratio)
     result = cv2.resize(padded_img, (width, height))
     return result
@@ -62,9 +64,7 @@ def get_all_X_Y(all_imgs_dir, desired_ratio, width, height, crop_bottom=0):
     for label, fns in all_imgs_dir.items():
         for fn in fns:
             img = plt.imread(fn)
-            if crop_bottom > 0:
-                img = img[:img.shape[0]-crop_bottom, :]
-            new_img = pad_and_resize(img, desired_ratio, width, height)
+            new_img = pad_and_resize(img, desired_ratio, width, height, crop_bottom)
         
             if X.size == 0:
                 X = np.array([new_img])
