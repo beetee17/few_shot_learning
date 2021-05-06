@@ -45,23 +45,24 @@
 
         </script>
 
-        <title> WELCOME </title>
+        <title> Welcome </title>
     </head>
     <body>
-        <h2>Getting Started</h2>
-        <p> Organise your files as such: </p>
+        <div class='ui container'>
+        <h1>Getting Started</h1>
+        <h3> Organise your files as such: </h3>
         <p style="font-style: italic;"> 
             folder <br>
             &ensp; ↳ query <br>
-            &ensp; &ensp; ↳ query_images<br>
+            &ensp; &ensp; ↳ foo.jpg<br>
             &ensp; ↳ support <br>
-            &ensp; &ensp; ↳ label1 <br>
-            &ensp; &ensp; &ensp; ↳ label1_image <br>
-            &ensp; &ensp; ↳ label2 <br>
-            &ensp; &ensp; &ensp; ↳ label2_images <p>
+            &ensp; &ensp; ↳ label1_foo.png <br>
+            &ensp; &ensp; ↳ label2_bar.jpg <br>
+            &ensp; &ensp; ↳ label1_foo.png <br>
+            &ensp; &ensp; ↳ label2_bar.jpg <br>
         <p>
 
-                <form id='form', action="/uploadfiles/" enctype="multipart/form-data" method="post">
+                <form id='form', action="/get_predictions/" enctype="multipart/form-data" method="post">
 
                 <input name="files" type="file" id="files" style="display: none" webkitdirectory directory multiple/>
 
@@ -70,9 +71,7 @@
                 <button input type="submit"  class="ui button">Submit</button>
                 </form>
 
-                
-
-                <img id='output' width='200' />
+            </div>
 
     </body>
 
