@@ -1,71 +1,54 @@
 import sys
-from typing import Optional
-import requests
-from typing import List
-from fastapi import FastAPI, Request, File, UploadFile
-from fastapi.responses import Response
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-
 sys.path.append('c:\\Users\\Admin\\few_shot_learning\\')
-
 from Utils import preprocess, testModels,  utils
 
-import matplotlib.pyplot as plt
-import numpy as np
+import io
 import os
+import shutil
+import requests
+import numpy as np
 
-import keras
+from PIL import Image
+from pathlib import Path
+from typing import Optional, List
+from keras.models import load_model
+
+
+from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, Request, File, UploadFile
+
+
 
 ### pip install fastapi
 ### pip install uvicorn[standard]
 ### cd C:\Users\Admin\few_shot_learning\aircraft\fastapi
-### uvicorn main:app --reload
+### uvicorn main:app --reload-dir C:\Users\Admin\few_shot_learning\aircraft\fastapi\main.py
 
 print('loading model...')
-model = keras.models.load_model(r'C:\Users\Admin\few_shot_learning\aircraft\models\vgg16_batch_50_norm.h5')
-
-def get_pairs(path):
-
-    support_set = list()
-    
- 
-    query_img_dir = ['{}\query\{}'.format(path, i) for i in os.listdir(path + '\query')][0]
-
-    support_imgs_dir = ['{}\support\{}'.format(path, i) for i in os.listdir(path + '\support')]
-    
-    query = plt.imread(query_img_dir)
-    query = preprocess.pad_and_resize(query, desired_ratio=1.4, width=280, height=200)
-    
-    
-    for img_dir in support_imgs_dir:
-        support_img = plt.imread(img_dir)
-        support_img = preprocess.pad_and_resize(support_img, desired_ratio=1.4, width=280, height=200)
-
-        pair = [query, support_img]
-        support_set.append(pair)
-
-    
-    return query_img_dir, support_imgs_dir, np.array(support_set)
-
+model = load_model(r'C:\Users\Admin\few_shot_learning\aircraft\models\vgg16_batch_50_norm.h5')
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 db = []
 templates = Jinja2Templates(directory='templates')
-from PIL import Image
-import io
-from pathlib import Path
 
 
-@app.post("/uploadfiles/")
+
+@app.post("/get_predictions/")
 async def create_upload_files(request : Request, files: List[UploadFile] = File(...)):
+    """Receives a list of files uploaded by the user via the form in root webpage. Saves the files into the static folder and also gets the model's predictions for each support/query pair. Returns a HTML Response with the prediction outputs and the filenames for visualisation purposes"""
 
     support_set = list()
     queries = list()
     all_pairs = list()
     filenames = list()
 
+    # for each file: read and write into the static/images dir
+    # filter the files into support and query images by looking at the filenames
+    # pad and resize the images to allow input into our model (280x200)px
+    # feed the images into the model and return the predictions as a list
     for file in files:
      
         contents = await file.read()
@@ -74,14 +57,15 @@ async def create_upload_files(request : Request, files: List[UploadFile] = File(
         filenames.append(file_name.replace(os.getcwd() + '\\static\\', ''))
         Path(os.path.dirname(file_name)).mkdir(parents=True, exist_ok=True)
 
-        with open(file_name, 'wb+') as f:
-            f.write(contents)
+ 
+        image_bytes = Image.open(io.BytesIO(contents))
         
-        image = Image.open(io.BytesIO(contents))
-        
-        image = np.array(image)
+        image = np.array(image_bytes)
 
-        image = preprocess.pad_and_resize(image, desired_ratio=1.4, width=280, height=200)
+        image = preprocess.pad_and_resize(image, desired_ratio=1.4, width=280, height=200, crop_bottom=20)
+
+        image_bytes = Image.fromarray(image)
+        image_bytes.save(file_name)
 
         if 'support' in file.filename:
 
@@ -106,11 +90,24 @@ async def create_upload_files(request : Request, files: List[UploadFile] = File(
     
     return  templates.TemplateResponse('predictions.html', {'request' :  request, 'filenames' : filenames, 'predictions' : predictions})
 
+
 @app.get("/")
 def read_root(request : Request):
-    
-    return templates.TemplateResponse('home.html', {'request' : request,
-                                                    })
+
+    # ensure the static/images dir is cleared before user uploads any files 
+    try:
+
+        path = 'C:\\Users\\Admin\\few_shot_learning\\aircraft\\fastapi\\static\\images'
+
+        for dir_ in os.listdir(path):
+
+            shutil.rmtree(path + '\\' + dir_)
+
+    except Exception as e:
+
+        print(e)
+
+    return templates.TemplateResponse('home.html', {'request' : request})
     
 
 
