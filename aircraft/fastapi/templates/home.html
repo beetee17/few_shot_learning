@@ -8,52 +8,50 @@
         integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
         crossorigin="anonymous">
 
-
-
+        </script>
         
-        </script>
-    
-        <script>
-           
-                
-            $(document).ready(function() {
-
-                // open file browser when browse button is clicked
-                $('#browse').click(function() {
-                    $('#files').trigger('click')
-                })
-
-                document.getElementById('files').onchange = function (e) {
-
-                    console.log('test')
-                    var theFiles = e.target.files;
-                    console.log(theFiles)
-                    
-                    for (i=0; i < theFiles.length; i++) {
-                        console.log(theFiles[i])
-                        var img = document.createElement('img')
-                        img.src = URL.createObjectURL(theFiles[i])
-                        img.width = 280
-                        img.height = 200
-                        document.body.appendChild(img)
-                    }
-
-                    browse_button = document.getElementById('browse')
-                    browse_button.title = `${theFiles.length} Files Chosen`
-                    
-                    for (i=0; i < theFiles.length; i++) {
-                        browse_button.title = browse_button.title.concat(`\n${theFiles[i]['name']}`)
-                    }
-                    
-
-                }
-            
-            });
-
-        </script>
-
         <title> Welcome </title>
+
     </head>
+    
+    <script>
+           
+        $(document).ready(function() {
+
+            // open file browser when browse button is clicked
+            $('#browse').click(function() {
+                $('#files').trigger('click')
+            })
+
+            document.getElementById('files').onchange = function (e) {
+
+                console.log('test')
+                var theFiles = e.target.files;
+                console.log(theFiles)
+                
+                for (i=0; i < theFiles.length; i++) {
+                    console.log(theFiles[i])
+                    var img = document.createElement('img')
+                    img.src = URL.createObjectURL(theFiles[i])
+                    img.width = 280
+                    img.height = 200
+                    document.body.appendChild(img)
+                }
+
+                browse_button = document.getElementById('browse')
+                browse_button.title = `${theFiles.length} Files Chosen`
+                
+                for (i=0; i < theFiles.length; i++) {
+                    browse_button.title = browse_button.title.concat(`\n${theFiles[i]['name']}`)
+                }
+                
+
+            }
+        
+        });
+
+    </script>
+
     <body>
         <div class='ui container'>
         <h1>Getting Started</h1>
