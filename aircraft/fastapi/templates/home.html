@@ -37,6 +37,13 @@
                         img.height = 200
                         document.body.appendChild(img)
                     }
+
+                    browse_button = document.getElementById('browse')
+                    browse_button.title = `${theFiles.length} Files Chosen`
+                    
+                    for (i=0; i < theFiles.length; i++) {
+                        browse_button.title = browse_button.title.concat(`\n${theFiles[i]['name']}`)
+                    }
                     
 
                 }
@@ -66,9 +73,9 @@
 
                 <input name="files" type="file" id="files" style="display: none" webkitdirectory directory multiple/>
 
-                <button input type="button" id='browse' class="ui button">Browse</button>
+                <button input type="button" id='browse' class="ui button" title='Upload Images'>Browse</button>
 
-                <button input type="submit"  class="ui button">Submit</button>
+                <button input type="submit" class="ui button" title='Confirm Upload'>Submit</button>
                 </form>
 
             </div>
