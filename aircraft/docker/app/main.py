@@ -32,11 +32,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory='templates')
 
-# model = load_model('/docker/app/model.h5')
-
-# app.mount("/static", StaticFiles(directory="/docker/app/static"), name="static")
-
-# templates = Jinja2Templates(directory='/docker/app/templates')
 
 @app.post("/get_predictions/")
 async def create_upload_files(request : Request, files: List[UploadFile] = File(...)):
@@ -103,7 +98,6 @@ def read_root(request : Request):
     try:
 
         path = 'C:\\Users\\Admin\\few_shot_learning\\aircraft\\docker\\app\\static\\images'
-        # path = '/docker/app/static/images'
 
         for dir_ in os.listdir(path):
 
