@@ -23,25 +23,23 @@
 
         $(document).ready(function() {
 
-            
-
             // format the filename strings
-            var filenames = '{{filenames}}'.replaceAll('&#39;', '').replaceAll('\\', '/').replace('[', '').replace(']', '')
+            var fns = '{{filenames}}'.replaceAll('&#39;', '').replaceAll('\\', '/').replace('[', '').replace(']', '')
             
             // get the filenames as a iterable array
-            var fns = filenames.split(',')
+            var fns = fns.split(',')
 
             // this is the first half of our image path
             var static = "{{ url_for('static', path='') }}"
 
             // format the predictions similarly and get iterable array
-            var p = '{{predictions}}'.replaceAll('[', '').replaceAll(']', '')
+            var predictions = '{{predictions}}'.replaceAll('[', '').replaceAll(']', '')
+            predictions = predictions.split(',')
 
-            var P = p.split(',')
-            predictions = []
+            for (i=0; i < predictions.length; i++) {
 
-            for (i=0; i < P.length; i++) {
-                predictions.push(Number(P[i].trim().slice(0,6)))
+                predictions[i] = Number(predictions[i].trim().slice(0,6))
+
             }
 
             // split our filenames into support and query images
@@ -54,6 +52,7 @@
                 if (fns[i].search('query') != -1) {
 
                     query_fns.push(fns[i].trim())
+
                 }
 
                 else {
@@ -63,6 +62,7 @@
                         support_fns.push(fns[i].trim())
                         label = fns[i].split('/').pop()
                         labels.push(label.split('_')[0])
+
                     }
                 }
 
@@ -90,7 +90,7 @@
             pred_index = 0
 
             // assign grid element to a variable for referencing in for loop
-            grid = document.getElementById('grid')
+            grid =  document.getElementById('grid')
        
 
             // iterate through our query files
