@@ -1,0 +1,217 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+
+        <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous">
+    
+        </script>
+
+        <style>
+            mark{
+                    background-color:#c0ffc8;
+                }
+         </style>
+
+        <title> Predictions </title>
+        
+    </head>
+
+    <script>
+            
+        $(document).ready(function() {
+
+            $('#home').click(function()  {
+
+                window.location = ('http://').concat(window.location.host)
+
+            })
+
+            let re1 = /(&#39;)*\[?\]?/g
+            let re2 = /\\/g
+            // format the filename strings
+            var fns = '{{filenames}}'.replace(re1, '').replace(re2, '/')
+            
+            
+            // get the filenames as a iterable array
+            var fns = fns.split(',')
+
+            for (i=0; i < fns.length; i++) {
+
+                fns[i] = fns[i].trim()
+                
+            }
+
+            // this is the first half of our image path
+            var static = "{{ url_for('static', path='') }}"
+
+            // format the predictions similarly and get iterable array
+            var predictions = '{{predictions}}'.replaceAll('[', '').replaceAll(']', '')
+            predictions = predictions.split(',')
+
+            for (i=0; i < predictions.length; i++) {
+
+                predictions[i] = Number(predictions[i].trim().slice(0,6))
+
+            }
+
+            // split our filenames into support and query images
+            var query_fns = []
+            var support_fns = []
+            var labels = []
+
+            for (var i=0; i < fns.length; i ++) {
+
+                if (fns[i].search('query') != -1) {
+
+                    query_fns.push(fns[i])
+
+                }
+
+                else {
+
+                    if (fns[i].search('support') != -1) {
+                        
+                        support_fns.push(fns[i])
+                        label = fns[i].split('/').pop()
+                        labels.push(label.split('_')[0])
+
+                    }
+                }
+
+            }
+
+            // find the label corresponding to the max prediction for each query 
+            answers = []
+
+            for (var i=0; i < query_fns.length; i ++) {
+                start_index = i*support_fns.length
+                end_index = start_index + support_fns.length
+
+                p = predictions.slice(start_index, end_index)
+
+                index = p.indexOf(Math.max.apply(null, p))
+                answers.push(labels[index])
+            }
+
+            console.log(query_fns)
+            console.log(support_fns)
+            console.log(predictions)
+            console.log(answers)
+            
+            // to extract each prediction incrementally in our for loop
+            pred_index = 0
+
+            // assign grid element to a variable for referencing in for loop
+            grid =  document.getElementById('grid')
+       
+
+            // iterate through our query files
+            // for each query iterate throught the support files to get the predictions e.g 3 query and 4 support images. There are a total of 4*3=12 predictions generated (each query is paired with all 4  support images)
+            for (var i=0; i < query_fns.length; i ++) {
+
+                // create two rows: the first specifies the query number. The second displays the query image underneath the heading
+                num_query_text = document.createElement('h2')
+                num_query_text.innerHTML = `Query ${i+1}`
+                
+                num_query = document.createElement('div')
+                num_query.className = 'centered row'
+                num_query.appendChild(num_query_text)
+                
+                img = document.createElement('div')
+                img.className = 'centered row'
+
+                query_img = document.createElement('img')
+                query_img.src = static.concat(query_fns[i])
+               
+                query_img.width = 280
+                query_img.height = 200
+
+                img.appendChild(query_img)
+                
+                // create another two rows: the first contains the predictions by our model. The second displays the  support image that corresponds to the prediction between it and the query image directly above it
+                img_row = document.createElement('div')
+                img_row.className = 'equal width row'
+                img_row.id = `img row ${i}`
+
+                txt_row = document.createElement('div')
+                txt_row.className = 'equal width row'
+                txt_row.id = `txt row ${i}`
+                
+                txt_row = document.createElement('div')
+                txt_row.className = 'equal width row'
+                txt_row.id = `txt row ${i}`
+
+                grid.appendChild(num_query)
+                grid.appendChild(img)
+                grid.appendChild(txt_row)
+                grid.appendChild(img_row)
+                
+
+                for (var j=0; j < support_fns.length; j++) {
+
+                    // create two columns for each support image: the first contains the prediciton and label and the second displays the support image underneath the prediction
+                    txt_col = document.createElement('div')
+                    txt_col.className = 'center aligned column'
+
+                    txt = document.createElement('h3')
+                    
+                    // highlight the text corresponding to support image with highest prediction 
+                    if (answers[i] == labels[j]) {
+                        txt.innerHTML = `<mark>${labels[j]}: ${predictions[pred_index]}</mark>`
+                    }
+                    else {
+                        txt.innerHTML = `${labels[j]}: ${predictions[pred_index]}`
+                    }
+                
+                    var support_img = document.createElement('img')
+                    support_img.src = static.concat(support_fns[j])
+                
+                    support_img.width = 280
+                    support_img.height = 200
+                    
+                    img_col = document.createElement('div')
+                    img_col.className = 'center aligned column'
+                    img_col.id = `column ${j}`
+                    
+                    img_row = document.getElementById(`img row ${i}`)
+                    img_row.appendChild(img_col)
+
+                    txt_row = document.getElementById(`txt row ${i}`)
+                    txt_row.appendChild(txt_col)
+
+                    txt_col.appendChild(txt)
+                    img_col.appendChild(support_img)
+
+                    pred_index = pred_index + 1
+                }
+              
+            }
+            
+            
+        })
+
+    </script>
+
+    <body>
+
+        <div class='ui container'>
+
+            <button class="ui icon button" id='home'><i aria-hidden="true" class="home icon"></i></button>
+
+            <h1>Predictions</h1>
+
+            <div class='ui grid container' id='container'>          
+
+                <div class="ui equal width grid" id='grid'></div>
+
+            </div>
+
+        </div>
+       
+    </body>
+
+</html>

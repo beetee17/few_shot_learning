@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+
+        <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous">
+
+        </script>
+        
+        <title> Welcome </title>
+
+    </head>
+    
+    <script>
+           
+        $(document).ready(function() {
+
+            // open file browser when browse button is clicked
+            $('#browse').click(function() {
+                $('#files').trigger('click')
+            })
+
+            document.getElementById('files').onchange = function (e) {
+
+                console.log('test')
+                var theFiles = e.target.files;
+                console.log(theFiles)
+                
+                for (i=0; i < theFiles.length; i++) {
+                    console.log(theFiles[i])
+                    var img = document.createElement('img')
+                    img.src = URL.createObjectURL(theFiles[i])
+                    img.width = 280
+                    img.height = 200
+                    document.body.appendChild(img)
+                }
+
+                browse_button = document.getElementById('browse')
+                browse_button.title = `${theFiles.length} Files Chosen`
+                
+                for (i=0; i < theFiles.length; i++) {
+                    browse_button.title = browse_button.title.concat(`\n${theFiles[i]['name']}`)
+                }
+                
+
+            }
+        
+        });
+
+    </script>
+
+    <body>
+        <div class='ui container'>
+        <h1>Getting Started</h1>
+        <h3> Organise your files as such: </h3>
+        <p style="font-style: italic;"> 
+            folder <br>
+            &ensp; ↳ query <br>
+            &ensp; &ensp; ↳ foo.jpg<br>
+            &ensp; ↳ support <br>
+            &ensp; &ensp; ↳ label1_foo.png <br>
+            &ensp; &ensp; ↳ label2_bar.jpg <br>
+            &ensp; &ensp; ↳ label1_foo.png <br>
+            &ensp; &ensp; ↳ label2_bar.jpg <br>
+        <p>
+
+                <form id='form', action="/get_predictions/" enctype="multipart/form-data" method="post">
+
+                <input name="files" type="file" id="files" style="display: none" webkitdirectory directory multiple/>
+
+                <button input type="button" id='browse' class="ui button" title='Upload Images'>Browse</button>
+
+                <button input type="submit" class="ui button" title='Confirm Upload'>Submit</button>
+                </form>
+
+            </div>
+
+    </body>
+
+ 
+
+</html>
