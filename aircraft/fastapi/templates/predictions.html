@@ -16,18 +16,34 @@
                 }
          </style>
 
-
-        <script>
-            
+        <title> Predictions </title>
         
+    </head>
 
+    <script>
+            
         $(document).ready(function() {
 
+            $('#home').click(function()  {
+
+                window.location = ('http://').concat(window.location.host)
+
+            })
+
+            let re1 = /(&#39;)*\[?\]?/g
+            let re2 = /\\/g
             // format the filename strings
-            var fns = '{{filenames}}'.replaceAll('&#39;', '').replaceAll('\\', '/').replace('[', '').replace(']', '')
+            var fns = '{{filenames}}'.replace(re1, '').replace(re2, '/')
+            
             
             // get the filenames as a iterable array
             var fns = fns.split(',')
+
+            for (i=0; i < fns.length; i++) {
+
+                fns[i] = fns[i].trim()
+                
+            }
 
             // this is the first half of our image path
             var static = "{{ url_for('static', path='') }}"
@@ -51,7 +67,7 @@
 
                 if (fns[i].search('query') != -1) {
 
-                    query_fns.push(fns[i].trim())
+                    query_fns.push(fns[i])
 
                 }
 
@@ -59,7 +75,7 @@
 
                     if (fns[i].search('support') != -1) {
                         
-                        support_fns.push(fns[i].trim())
+                        support_fns.push(fns[i])
                         label = fns[i].split('/').pop()
                         labels.push(label.split('_')[0])
 
@@ -177,25 +193,25 @@
             
             
         })
-        </script>
 
-        <title> Predictions </title>
-    </head>
+    </script>
+
     <body>
-        
-     
 
-        <div class='ui grid container' id='container'>
+        <div class='ui container'>
 
-            <h1><br>Predictions</h1>
+            <button class="ui icon button" id='home'><i aria-hidden="true" class="home icon"></i></button>
 
-            <div class="ui equal width grid" id='grid'></div>
+            <h1>Predictions</h1>
+
+            <div class='ui grid container' id='container'>          
+
+                <div class="ui equal width grid" id='grid'></div>
+
+            </div>
 
         </div>
        
-
     </body>
-
-
 
 </html>
