@@ -6,5 +6,6 @@ models
 preprocess
 *.txt
 *.PNG
+*.h5
 example
 static
