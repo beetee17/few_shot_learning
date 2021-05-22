@@ -30,18 +30,18 @@ if __name__ == '__main__':
         ## TRAIN A MODEL
 
         # Load training and validation datasets
-        kwargs = {'train_pairs' : True,
-                'train_labels' : True,
+        kwargs = {'train_pairs2' : True,
+                'train_labels2' : True,
                 'val_pairs' : True,
                 'val_labels' : True}
 
         print('loading training and validation set...\n')
         data = load_data(path="D://", **kwargs)
 
-        train_labels = data['train_labels']
+        train_labels = data['train_labels2']
         val_labels = data['val_labels']
         val_inputs = [data['val_pairs'][:,0], data['val_pairs'][:,1]]
-        train_inputs = [data['train_pairs'][:,0], data['train_pairs'][:,1]]
+        train_inputs = [data['train_pairs2'][:,0], data['train_pairs2'][:,1]]
 
         del data
         import gc
@@ -220,8 +220,9 @@ if __name__ == '__main__':
         data = load_data(path="D://", **{'X_test' : True, 'Y_test' : True})
 
         # Specify the testing parameters
-        N = int(input('Enter number of ways to test the models:\n').strip())
-        N = range(1, N+1)
+        a = int(input('Enter lower bound of ways to test the models:\n').strip())
+        b = int(input('Enter upper bound of ways to test the models:\n').strip())
+        N = range(a, b+1)
 
         NUM_TEST = int(input('Enter number of tests per model:\n').strip())
 
