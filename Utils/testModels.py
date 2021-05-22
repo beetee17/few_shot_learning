@@ -126,7 +126,7 @@ def get_accuracy(models, X_test, Y_test, N, num_tests):
     for n in N:
 
         if n != 1:
-            print('testing {}-shot 1-way...'.format(n))
+            print('testing {}-way 1-shot...'.format(n))
 
         if n == 1:
             for k, v in accuracies.items():
