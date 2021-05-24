@@ -3,36 +3,22 @@ Few Shot Learning (FSL) is a sub-area of machine learning (ML) that can be used 
 
 These cases cannot be solved in the same way as conventional deep learning, and at its surface seems to be an almost impossible task for a machine to be able to recognise such classes any better than a random guess. 
 
+In traditional deep learning, the machine is tasked with recognising a preset list of classes (objects). Beyond that, it is relatively useless. For example, a model that classifies this set of classes would be trained on a large dataset with images of each class that are one hot encoded. From there, the model uses an optimisation algorithm (e.g. gradient descent) to minimise some loss function that measures the error between the model's output is from the samples' label. From this very simplified explanation, we see that the model would only be able to accurately tell if an image was a lion or not given a sufficiently large training set. An image from any other class would simply result in a useless output. Moreover, if our dataset was small, the model would not be accurate in any way.
+
 # Intuition of FSL
 
-It is obvious that we are, for example, able to recognise our parents' faces as we have seen them countless times from different angles and in different conditions. However, consider also that we are able to glance at someone's IC and tell immediately if the person in question is indeed the owner of his/her identifiaction. The human mind somehow has the ability to one-shot learn, let alone FSL. If deep learning attempts to emulate the workings of the human brain and the connection between its neurons to identify objects, maybe there exists some way to adapt the current deep learning techniques to objects with limited samples.
+However, the human mind somehow has the ability to preform few shot learning. Consider the following pictures, which represent a 2-way 2-shot task. The number of ways and shots are determined by the support set, meaning that it contains 2 classes - the Armadillo and Pangolin - and each contains two positive samples. The support set is what the model uses to determine which class the image belongs to. Note that the model is not trained on any of the classes in the support set. If we are given these set of images, and following that we are given an image of unknown class (known as the query image), we realise that as humans we easily figure out which class within the support set that the image belongs to. 
 
-Returning to our example and taking a closer look, we realise that the brain is able to accurately recognise a face with a single positive sample because it is, in a sense, 'cheating'. It has likely seen millions of other faces, or even other objects, and trained itself to differentiate (or recognise the similarity between) any 2 objects. We can say that the brain has learnt to learn. This is the key finding that will allow us to train machines in FSL.
+If deep learning was inspired by the workings of the human brain and the connection between its neurons to identify objects, then maybe there exists some way to adapt the current deep learning techniques to objects with limited samples.
 
-Meta learning, or learning to learn, means that a model learns the reason behind classification decisions, rather than a rote approach in the case of conventional deep learning. In this case, the reason our brains can tell if an unknown object belongs to some class is due to the similarity between the Query image (the person's actual face) and the Support Set (the person's IC).
+Returning to our example and taking a closer look, we realise that the brain is able to accurately accomplish a few shot learning task because it is, in a sense, 'cheating'. It has likely seen millions of other animals, or even other objects, and trained itself to differentiate (or recognise the similarity between) any 2 objects. We can say that the brain has learnt to learn. This is the key finding that will allow us to train machines in FSL.
 
-A model of this example would be a *1-way 1-shot* classifier. However, a support set usually contains images from multiple classes. The model compares the query with each support image and outputs a similarity value for each image pair, usually between 0 and 1. The model's prediction would be the class of the support image that produced the highest similarity value when paired with the query. A more apt example would be a theft victim picking out the thief from a list of *n* suspects, with each suspect having *k* photos. This model would be a *n-way k-shot* classifier.
+Meta learning, or learning to learn, means that a model learns the reason behind classification decisions, rather than a rote approach in the case of conventional deep learning. In this case, the reason our brains can tell if an unknown object belongs to some class is due to the similarity between the query image and each image the support set.
 
-
-# How FSL Works
-In traditional deep learning, the machine is tasked with recognising a preset list of classes (objects). Beyond that, it is relatively useless. For example, a model that classifies lions would be trained on a large dataset with images of lions (positive sample) and not lions (negative sample). The positive samples are labelled with 1, and 0 for negative samples. From there, the model uses an optimisation algorithm (e.g. gradient descent) to minimise some loss function that measures the error between the model's output is from the samples' label. From this very simplified explanation, we see that the model would only be able to accurately tell if an image was a lion or not given a sufficiently large training set. An image from any other class would simply result in a 0 output (i.e. a support set would be useless to the model). Moreover, if our dataset was small, the model would not be accurate in any way.
-
-However, if we change the way we label our samples such that each pair of image would be a positive sample if they belong to the same class, and a negative sample otherwise, we are able to alter the model's goal to detecting the similarity of 2 images. This eliminates the need to train our model with samples of the rare class. We can use other classes which we have large datsets of to meta learn. Thus, when given an unseen query image from the rare class, we can use the one/few samples that we have and ask our model if they are the same object; this would yield a useful output.
-
-In summary, FSL consists of the following:
-1. Take the pair of images of a sample and iteratively pass them though a convolutional neural network for feature extraction
-2. Take the absolute value of the difference between the 2 feature vectors
-3. Process the resultant vector via dense layers to produce a scalar value
-4. Apply the sigmoid function to obtain the model's prediction as a similarity value between 0 and 1
-5. Compute the loss function by comparing the similarity value with the sample's label 
-6. Calculate the gradients of the loss function with respect to the dense layers' parameters and perform gradient descent to update its parameters 
-7. Further propagate the gradient to update the parameters of the neural network
-8. Repeat using all training data
-9. Test the model using a query image and a support set. Note that all the images involved do not belong to any of the classes found in the training data
+Hence, if we change the way we label our samples such that each pair of image would be a positive sample if they belong to the same class, and a negative sample otherwise, we are able to alter the model's goal to detecting the similarity of 2 images. This eliminates the need to train our model with samples of the rare class. We can use other classes which we have large datasets of to meta learn. After learning, we can input unseen images from a rare class, and use the one/few samples that we have and ask our model if they are the same object; this would yield a useful output.
 
 # CNNs
-
-A convolutional neural network (CNN) is a special kind of Feed Forward Neural Network that significantly reduces the number of parameters in a deep neural network with many units without losing too much in the quality of the model.
+A convolutional neural network is essentially a nerual network that is designed specially for images.
 
 Due to the nature of images, where the important information within an image is concentrated in small regions, we can use the idea of convolutions (or filters) to scan the image with the aim of extracting the important features and reduce the dimensionality of our input with each convolution. 
 
@@ -40,7 +26,7 @@ A convolution, F, is simply a p x p matrix, that scans a similar p x p patch of 
 
 A convolutional layer consists of multiple convolutions, each with p x p parameters that can be trained during the backpropagation step to extract the 'best' features of an image.
 
-Multiple convolutional layers may be used in a neural network, with the idea that each subsequent layer extracts increasingly finer/abstract features of an image, leading to greater accuracy of the model. If the CNN has one convolution layer following another convolution layer, then the subsequent layer l + 1 treats the output of the preceding layer l as a collection of size l image matrices (where size l is the number of filters in the previous layer), known as a volume. The size of that collection is called the volume’s depth. Each filter of layer l + 1 convolves the whole volume.
+Multiple convolutional layers may be used in a neural network, with the idea that each subsequent layer extracts increasingly finer/abstract features of an image, leading to greater accuracy of the model.
 
 Pooling layers may be combined with convolutional layers to increase accuracy of th model while reducing the dimensionality of its input, resulting in quicker training. It works similar to a convolution, however, a fixed operator is applied to each patch, e.g. max or average, instead of a filter matrix. This means that the pooling layer has no trainable parameters.
 
@@ -57,10 +43,10 @@ In order to build our model to learn a similarity function, we have to consider 
 
 # Omniglot Dataset
 
-My first goal was to create a working architecture of a siamese network. The omniglot dataset was used to validate that the model was working as intended. It is a dataset consisting of 30 novel alphabets such as Arabic, Hebrew, Sanskrit, etc. Each alphabet contains around 20 characters each, and totals to over 600 classes. Each character has just 20 samples, which are 105 x 105 black and white images of handwritten drawings. The structure of the datset, as well as the standardisation of its samples allowed me to focus on creating the model, rather than spend too much time preprocessing the data. Thus, I chose to use this dataset as a starting point.
+My first goal was to create a working architecture of a siamese network. The omniglot dataset was used to validate that the model was working as intended. It is a dataset consisting of 30 novel alphabets such as Arabic, Hebrew, Sanskrit, etc. Each alphabet contains around 20 characters each, and totals to over 600 classes. Each character has just 20 samples, which are 105 x 105 black and white images of handwritten drawings. The structure of the dataset, as well as the standardisation of its samples allowed me to focus on creating the model, rather than spend too much time preprocessing the data. Thus, I chose to use this dataset as a starting point.
 
 (go through omniglot.ipynb)
-- minimal preprocessing (loading daaset, making sample pairs)
+- minimal preprocessing (loading dataset, making sample pairs)
 - architecture of siamese network (2 of same CNN feeding feature vectors to dense layers -> sigmoid)
 - test against baselines (show plotted pdfs)
 - implemented early stopping callback (show learning curve) + idea of fine tuning a pretrained model i.e transfer learning to further increase model accuracy
@@ -68,7 +54,7 @@ My first goal was to create a working architecture of a siamese network. The omn
 
 # Fine-Grained Visual Classification of Aircraft (FGVC-Aircraft)
 
-After learning how to create a siamese network and implement few shot learning with the model, I applied the same workflow as the omniglot dataset to a military aircraft dataset. This dataset is a subset of the open source aircraft dataset known as FGVC aircraft dataset. I filtered out the commercial airline models from the dataset, leaving with 30 classes of aircraft which have some sort of miliatry usage. The 30 classes were split into 20 for training, 5 for validation and 5 for testing. Each class has 100 samples, which are coloured images of varying sizes at different angles. 
+After learning how to create a siamese network and implement few shot learning with the model, I applied the same workflow as the omniglot dataset to a military aircraft dataset. This dataset is a subset of the open source aircraft dataset known as FGVC aircraft dataset. I filtered out the commercial airline models from the dataset, leaving with 30 classes of aircraft which have some sort of military usage. The 30 classes were split into 20 for training, 5 for validation and 5 for testing. Each class has 100 samples, which are coloured images of varying sizes at different angles. 
 
 (show aircraft_prep.ipynb)
 - loading of dataset
