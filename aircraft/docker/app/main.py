@@ -19,8 +19,9 @@ from fastapi import FastAPI, Request, File, UploadFile
 
 ### pip install fastapi
 ### pip install uvicorn[standard]
-### cd C:\Users\Admin\few_shot_learning\aircraft\app
-### uvicorn main:app --reload-dir C:\Users\Admin\few_shot_learning\aircraft\app\main.py
+
+# cd C:\Users\Admin\few_shot_learning\aircraft\docker\app
+# uvicorn main:app --reload-dir 
 
 print('loading model...')
 db = []
