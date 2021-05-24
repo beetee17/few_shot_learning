@@ -40,7 +40,7 @@ async def create_upload_files(request : Request, files: List[UploadFile] = File(
     queries = list()
     all_pairs = list()
     filenames = list()
-
+    
     # for each file: read and write into the static/images dir
     # filter the files into support and query images by looking at the filenames
     # pad and resize the images to allow input into our model (280x200)px
@@ -48,11 +48,15 @@ async def create_upload_files(request : Request, files: List[UploadFile] = File(
     for file in files:
      
         contents = await file.read()
+        print(file.filename)
 
-        file_name = os.getcwd() + '\\static\\images\\' + file.filename.replace('/', '\\')
-        filenames.append(file_name.replace(os.getcwd() + '\\static\\', ''))
+        file_name = os.getcwd() + '/app/static/images/' + file.filename
+        
+        filenames.append(file_name.replace(os.getcwd() + '/app/static/', ''))
+
         Path(os.path.dirname(file_name)).mkdir(parents=True, exist_ok=True)
 
+        print(file_name)
  
         image_bytes = Image.open(io.BytesIO(contents))
         
@@ -100,7 +104,7 @@ def read_root(request : Request):
 
         for dir_ in os.listdir(path):
 
-            shutil.rmtree(path + '\\' + dir_)
+            shutil.rmtree(path + '/' + dir_)
 
     except Exception as e:
 
