@@ -1,12 +1,13 @@
+import os
 import sys
-sys.path.append('c:\\Users\\Admin\\few_shot_learning\\')
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from Utils.Class import Predictor, FSL, Random, Nearest_Neighbour, Model_Nearest_Neighbour
 from Utils.saveLoad import save_data, load_data
 from Utils import preprocess, testModels, buildModel, utils
 
 import numpy as np
-import os
 import random
 
 from matplotlib import pyplot as plt
@@ -30,18 +31,30 @@ if __name__ == '__main__':
         ## TRAIN A MODEL
 
         # Load training and validation datasets
-        kwargs = {'train_pairs2' : True,
-                'train_labels2' : True,
-                'val_pairs' : True,
-                'val_labels' : True}
+    
+        while True:
 
-        print('loading training and validation set...\n')
-        data = load_data(path="D://", **kwargs)
+            path = input("Enter the absolute path to the directory containing your training and validation .h5 files:\n").strip()
 
-        train_labels = data['train_labels2']
-        val_labels = data['val_labels']
-        val_inputs = [data['val_pairs'][:,0], data['val_pairs'][:,1]]
-        train_inputs = [data['train_pairs2'][:,0], data['train_pairs2'][:,1]]
+            try:
+                kwargs = {'train_pairs' : True,
+                    'train_labels' : True,
+                    'val_pairs' : True,
+                    'val_labels' : True}
+
+                print('loading training and validation set...\n')
+                data = load_data(path=path, **kwargs)
+
+                train_labels = data['train_labels']
+                val_labels = data['val_labels']
+                val_inputs = [data['val_pairs'][:,0], data['val_pairs'][:,1]]
+                train_inputs = [data['train_pairs'][:,0], data['train_pairs'][:,1]]
+
+                break
+            
+            except Exception as e:
+                print(e)
+                continue
 
         del data
         import gc
@@ -75,11 +88,97 @@ if __name__ == '__main__':
         elif load == 'n':
 
             # train a new model from scratch
-            dense_layers = input("Enter the size of each of the model's dense layers (separated by commas)\n").strip().split(',')
 
-            model = buildModel.get_pretrained_model(input_shape=(200, 280, 3), num_dense=len(dense_layers), dense_size=dense_layers)
+            while True:
 
-        summary = input("Would you like to see a summary of your model? (y/n)\n").strip()
+                try:
+
+                    dense_layers = list(map(int, input("Enter the size of each of the model's dense layers (separated by commas)\n").strip().split(',')))
+
+                    assert min(dense_layers) >= 0, 'Please enter a non-negative number'
+                    break
+
+                except Exception as e:
+                    print(e)
+                    continue
+            
+            while True:
+
+                try:
+
+                    model = input('Enter the pretrained model you would like to fine-tune ("vgg16", "xception" "resnet"):\n').strip()
+
+                    assert model == "vgg16" or model == "xception" or model == "resnet", 'Please enter a valid model name'
+                    break
+
+                except Exception as e:
+                    print(e)
+                    continue 
+            
+            
+            while True:
+
+                try:
+
+                    num_layers = int(input('Enter the number of layers to fine-tune:\n').strip())
+
+                    assert num_layers >= 0, 'Please enter a non-negative number'
+                    break
+
+                except Exception as e:
+                    print(e)
+                    continue
+
+            while True:
+
+                try:
+
+                    input_shape = list(map(int, input("Enter the height and width of your data (separated by a comma):\n").strip().split(',')))
+
+                    input_shape.append(3)
+
+                    assert len(input_shape) == 3, 'Please enter a width and a height'
+                    assert min(input_shape) >= 0, 'Please enter a non-negative number'
+                    break
+
+                except Exception as e:
+                    print(e)
+                    continue
+        
+            while True:
+                
+                try:
+
+                    batch_norm = input('Would you like to use batch normalisation in the network? (y/n)\n').strip()
+
+                    assert batch_norm == 'y' or batch_norm == 'n', 'Enter "y" or "n" only'
+
+                    to_bool = {'y' : True, 'n' : False}
+
+                    break
+
+                except Exception as e:
+                        print(e)
+                        continue 
+
+            while True:
+
+                try:
+
+                    dropout = float(input('Enter the dropout percentage as a decimal, or enter 0 if no dropout is to be used:\n').strip())
+
+                    assert dropout >= 0, 'Please enter a non-negative number'
+                    break
+
+                except Exception as e:
+                    print(e)
+                    continue
+            
+            print('\nBuilding model...\n')
+            
+            model = buildModel.get_pretrained_model(input_shape=input_shape, base=model, trainable=num_layers, num_dense=len(dense_layers), dense_size=dense_layers, batch_norm=to_bool[batch_norm], dropout=dropout)
+
+        summary = input("Would you like to see a summary of your siamese network? (y/n)\n").strip()
 
         while summary != 'y' and summary != 'n':
             
