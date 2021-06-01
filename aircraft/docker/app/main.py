@@ -24,7 +24,6 @@ from fastapi import FastAPI, Request, File, UploadFile
 # uvicorn main:app --reload-dir 
 
 print('loading model...')
-db = []
 app = FastAPI()
 
 PATH = os.path.dirname(os.path.realpath(__file__))
@@ -44,7 +43,7 @@ async def create_upload_files(request : Request, files: List[UploadFile] = File(
     queries = list()
     all_pairs = list()
     filenames = list()
-
+    
     # for each file: read and write into the static/images dir
     # filter the files into support and query images by looking at the filenames
     # pad and resize the images to allow input into our model (280x200)px
@@ -53,15 +52,15 @@ async def create_upload_files(request : Request, files: List[UploadFile] = File(
      
         contents = await file.read()
 
-        file_name = PATH + '/static/images/' + file.filename
-        filenames.append(file_name.replace(PATH + '/static/', ''))
+        file_name = os.path.join(PATH, 'static', 'images', file.filename)
+
+        filenames.append(file_name.replace(os.path.join(PATH, 'static'), ''))
         Path(os.path.dirname(file_name)).mkdir(parents=True, exist_ok=True)
 
- 
         image_bytes = Image.open(io.BytesIO(contents))
         
         image = np.array(image_bytes)
-        image = image[:image.shape[0]-20, :]
+        image = image[:-20, :]
         image_bytes = Image.fromarray(image)
 
         image = preprocess.pad_and_resize(image_bytes, desired_ratio=1.4, width=280, height=200)
