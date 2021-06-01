@@ -10,7 +10,7 @@ RUN pip3 install -r requirements.txt
 
 COPY ./app ./app
 
-CMD ["python", "./app/docker.py"]
+CMD ["python", "./app/main.py"]
 
 
 # cd C:\Users\Admin\few_shot_learning\aircraft\docker

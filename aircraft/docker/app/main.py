@@ -27,11 +27,13 @@ print('loading model...')
 db = []
 app = FastAPI()
 
-model = load_model('model.h5')
+PATH = os.path.dirname(os.path.realpath(__file__))
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+model = load_model(os.path.join(PATH, 'model.h5'))
 
-templates = Jinja2Templates(directory='templates')
+app.mount("/static", StaticFiles(directory=os.path.join(PATH,"static")), name="static")
+
+templates = Jinja2Templates(directory=os.path.join(PATH,'templates'))
 
 
 @app.post("/get_predictions/")
@@ -51,8 +53,8 @@ async def create_upload_files(request : Request, files: List[UploadFile] = File(
      
         contents = await file.read()
 
-        file_name = os.getcwd() + '\\static\\images\\' + file.filename.replace('/', '\\')
-        filenames.append(file_name.replace(os.getcwd() + '\\static\\', ''))
+        file_name = PATH + '/static/images/' + file.filename
+        filenames.append(file_name.replace(PATH + '/static/', ''))
         Path(os.path.dirname(file_name)).mkdir(parents=True, exist_ok=True)
 
  
@@ -98,11 +100,11 @@ def read_root(request : Request):
     
     try:
 
-        path = 'C:\\Users\\Admin\\few_shot_learning\\aircraft\\docker\\app\\static\\images'
+        path = os.path.join(PATH, 'static', 'images')
 
         for dir_ in os.listdir(path):
 
-            shutil.rmtree(path + '\\' + dir_)
+            shutil.rmtree(os.path.join(path, dir_))
 
     except Exception as e:
 
