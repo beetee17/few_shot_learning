@@ -5,7 +5,8 @@ from keras.models import Sequential, Model
 
 from keras.applications.vgg16 import VGG16
 from keras.applications.resnet import ResNet50
- 
+from keras.applications.xception import Xception
+
 from keras.layers import Flatten
 from keras.layers import Flatten, Conv2D, MaxPooling2D, Dense, Concatenate, Dot, Lambda, Input, Dropout, BatchNormalization
 
@@ -110,47 +111,100 @@ def get_pretrained_model(input_shape, num_dense=1, dense_size=(256,), base='vgg1
         base = ResNet50(include_top=False, input_shape=input_shape, weights='imagenet')
         pre_train.add(base)
 
-        for layer in base.layers[:-trainable]:
-            layer.trainable = False
-            print(layer.name, layer.trainable)
+        if trainable == 0:
 
-        for layer in base.layers[-trainable:]:
-            layer.trainable = True
-            print(layer.name, layer.trainable)
+            for layer in base.layers:
+                layer.trainable = False
+        
+        else:
+            for layer in base.layers[:-trainable]:
+                layer.trainable = False
+
+            for layer in base.layers[-trainable:]:
+                layer.trainable = True
         
 
     elif base == 'vgg16':
         base = VGG16(include_top=False, input_shape=input_shape)
   
         # freeze all layers but last few, specified by trainable kwarg
-        for layer in base.layers[:-trainable]:
-            layer.trainable = False
-            pre_train.add(layer)
-            
 
-        for layer in base.layers[-trainable:]:
-            if batch_norm:
-                pre_train.add(BatchNormalization())
-            layer.trainable = True
-            pre_train.add(layer)
+        if trainable == 0:
+            
+            for layer in base.layers:
+                layer.trainable = False
+        
+        else:
+            for layer in base.layers[:-trainable]:
+                layer.trainable = False
+                pre_train.add(layer)
+                
+
+            for layer in base.layers[-trainable:]:
+                if batch_norm:
+                    pre_train.add(BatchNormalization())
+                layer.trainable = True
+                pre_train.add(layer)
+
+    elif base =='xception':
+        base = Xception(include_top=False, input_shape=input_shape, pooling='avg')
+
+        # freeze all layers but last few, specified by trainable kwarg
+        # Xception already includes batch_normalisation layers
+
+        if trainable == 0:
+            
+            for layer in base.layers:
+                layer.trainable = False
+        
+        else:
+
+            for layer in base.layers[:-trainable]:
+                layer.trainable = False
+                
+
+            for layer in base.layers[-trainable:]:
+                layer.trainable = True
+
+        pre_train.add(base)
 
 
     pre_train.add(Lambda(lambda v: K.reshape(v, (-1, np.prod(np.array(v.shape[1:]))))))
 
-    for i in range(num_dense):
-        if batch_norm:
+    if batch_norm:
             pre_train.add(BatchNormalization())
+
+    for i in range(num_dense):
+        
         pre_train.add(Dense(dense_size[i]))
 
         if dropout > 0:
             pre_train.add(Dropout(dropout))
 
-    for layer in pre_train.layers:
-        print(layer.name, layer.trainable)
+        if batch_norm:
+            pre_train.add(BatchNormalization())
+
         
     embedding = Model(pre_train.input, pre_train.output, name="Embedding")
-    
 
+    while True:
+                
+        try:
+
+            see_base = input('Would you like a summary of the pre-trained model? (y/n)\n').strip()
+
+            assert see_base == 'y' or see_base == 'n', 'Enter "y" or "n" only'
+
+            if see_base == 'y':
+                embedding.summary()
+
+            break
+
+        except Exception as e:
+                print(e)
+                continue 
+                    
+    
     # Generate the encodings (feature vectors) for the two images
     encoded_l = embedding(left_input)
     encoded_r = embedding(right_input)
