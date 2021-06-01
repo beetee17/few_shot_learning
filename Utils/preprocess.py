@@ -12,8 +12,12 @@ from sklearn.utils import shuffle
 
 def pad_img(img, desired_ratio):
 
+    try:
+        img = Image.fromarray(img)
+    except TypeError:
+        pass
+
     width, height = img.size
-    #convert to bytes here
  
     aspect_ratio = width / height
 
@@ -43,7 +47,7 @@ def pad_img(img, desired_ratio):
 
     return new_img
 
-def pad_and_resize(img, desired_ratio, width, height, crop_bottom=0):
+def pad_and_resize(img, desired_ratio, width, height):
 
     padded_img = pad_img(img, desired_ratio)
     
@@ -52,7 +56,7 @@ def pad_and_resize(img, desired_ratio, width, height, crop_bottom=0):
     return np.array(result)
 
 
-def get_all_X_Y(all_imgs_dir, desired_ratio, width, height, crop_bottom=0):
+def get_all_X_Y(all_imgs_dir, desired_ratio, width, height):
     
     X = np.array([])
     Y = []
@@ -61,7 +65,7 @@ def get_all_X_Y(all_imgs_dir, desired_ratio, width, height, crop_bottom=0):
     for label, fns in all_imgs_dir.items():
         for fn in fns:
             img = np.array(Image.open(fn).convert("RGB"))
-            new_img = pad_and_resize(img, desired_ratio, width, height, crop_bottom)
+            new_img = pad_and_resize(img, desired_ratio, width, height)
         
             if X.size == 0:
                 X = np.array([new_img])
