@@ -48,6 +48,8 @@
             // this is the first half of our image path
             var static = "{{ url_for('static', path='') }}"
 
+            console.log(static)
+
             // format the predictions similarly and get iterable array
             var predictions = '{{predictions}}'.replaceAll('[', '').replaceAll(']', '')
             predictions = predictions.split(',')
@@ -115,6 +117,7 @@
 
                 // create two rows: the first specifies the query number. The second displays the query image underneath the heading
                 num_query_text = document.createElement('h2')
+                
                 num_query_text.innerHTML = `Query ${i+1}`
                 
                 num_query = document.createElement('div')
